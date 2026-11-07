@@ -176,5 +176,84 @@
         ];
         L.polyline(routeLao, {color: '#3498db', weight: 4}).addTo(map);
     </script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // สร้างแผนที่พิกัดอำเภอเชียงของ / แม่น้ำโขง
+        var map = L.map('map').setView([20.265, 100.405], 14);
+
+        // เพิ่ม Tile Layer (แผนที่ OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // ปักหมุด Start / Finish ฝั่งไทย
+        var thaiMarker = L.marker([20.262, 100.403]).addTo(map)
+            .bindPopup("<b>Start/Finish ฝั่งไทย</b><br>โฮงเฮียนแม่น้ำของ (เชียงของ)");
+
+        // ปักหมุด ฝั่งลาว (ห้วยทราย)
+        var laoMarker = L.marker([20.270, 100.415]).addTo(map)
+            .bindPopup("<b>ท่าเรือเมืองห้วยทราย & จุดเช็คพอยต์</b><br>สปป. ลาว");
+
+        // ตัวอย่างเส้นทางจำลอง (Polyline) ฝั่งไทย
+        var routeThai = [
+            [20.262, 100.403],
+            [20.265, 100.395],
+            [20.268, 100.388],
+            [20.260, 100.390]
+        ];
+        L.polyline(routeThai, {color: '#e74c3c', weight: 4, dashArray: '5, 5'}).addTo(map);
+
+        // ตัวอย่างเส้นทางจำลอง (Polyline) ฝั่งลาว
+        var routeLao = [
+            [20.270, 100.415],
+            [20.273, 100.422],
+            [20.267, 100.425],
+            [20.265, 100.418]
+        ];
+        L.polyline(routeLao, {color: '#3498db', weight: 4}).addTo(map);
+
+        // ==========================================
+        // 🏃‍♂️ ขั้นตอนเพิ่มตัวนักวิ่งเคลื่อนที่ตามเส้นทาง
+        // ==========================================
+
+        // 1. สร้างไอคอนรูปนักวิ่ง (ใช้ Emoji หรือรูปภาพก็ได้ครับ)
+        var runnerIcon = L.divIcon({
+            className: 'runner-icon',
+            html: '<div style="font-size: 24px; background: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🏃‍♂️</div>',
+            iconSize: [35, 35],
+            iconAnchor: [17, 17]
+        });
+
+        // 2. สร้างหมุดนักวิ่งเริ่มต้นที่จุด Start ฝั่งไทย
+        var runnerMarker = L.marker([20.262, 100.403], { icon: runnerIcon }).addTo(map)
+            .bindPopup("<b>กำลังวิ่ง...</b><br>Kham Kong Run #Special 2026");
+
+        // 3. ฟังก์ชันสำหรับเคลื่อนที่ไปตามพิกัดในเส้นทาง (routeThai)
+        function animateRunner(routeCoords) {
+            let index = 0;
+            
+            function move() {
+                if (index < routeCoords.length) {
+                    // ย้ายหมุดนักวิ่งไปพิกัดถัดไป
+                    runnerMarker.setLatLng(routeCoords[index]);
+                    index++;
+                    // หน่วงเวลา 1 วินาที (1000 มิลลิวินาที) ต่อจุด ปรับความเร็วได้ที่นี่ครับ
+                    setTimeout(move, 1000); 
+                } else {
+                    // วิ่งครบแล้ว วนกลับมาจุดเริ่มต้นใหม่ (หรือหยุดก็ได้ครับ)
+                    setTimeout(() => {
+                        index = 0;
+                        move();
+                    }, 2000);
+                }
+            }
+            move();
+        }
+
+        // เริ่มต้นให้ตัวนักวิ่งขยับตามเส้นทางไทย
+        animateRunner(routeThai);
+    </script>
 </body>
 </html>

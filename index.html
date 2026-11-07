@@ -22,9 +22,11 @@
         #map { width: 100%; height: 350px; border-radius: 8px; margin-bottom: 15px; }
         
         .route-info { display: flex; gap: 10px; margin-bottom: 15px; }
-        .route-badge { flex: 1; padding: 10px; border-radius: 8px; color: white; text-align: center; font-size: 0.9rem; font-weight: bold; }
+        .route-badge { flex: 1; padding: 10px; border-radius: 8px; color: white; text-align: center; font-size: 0.9rem; font-weight: bold; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .route-badge:hover { opacity: 0.85; transform: translateY(-2px); }
         .badge-thai { background: #e74c3c; }
         .badge-lao { background: #3498db; }
+        .route-badge.active { border-color: #333; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 
         .timeline-date { font-weight: bold; color: #0f4c81; font-size: 1.1rem; margin-top: 15px; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
         .time-item { display: flex; margin-bottom: 12px; align-items: flex-start; }
@@ -49,11 +51,11 @@
             <div class="card-header">🗺️ แผนที่เส้นทางวิ่งสองฝั่งโขง (ไทย - ลาว)</div>
             <div class="card-body">
                 <div class="route-info">
-                    <div class="route-badge badge-thai">เส้นทาง A: วิ่งฝั่งไทย 5 กม.[cite: 1]</div>
-                    <div class="route-badge badge-lao">เส้นทาง B: เดินฝั่งลาว 5 กม.[cite: 1]</div>
+                    <div class="route-badge badge-thai active" id="btnThai" onclick="switchRoute('thai')">🏃‍♂️ เส้นทาง A: วิ่งฝั่งไทย 5 กม.[cite: 1]</div>
+                    <div class="route-badge badge-lao" id="btnLao" onclick="switchRoute('lao')">🏃‍♀️ เส้นทาง B: เดินฝั่งลาว 5 กม.[cite: 1]</div>
                 </div>
                 <div id="map"></div>
-                <p style="font-size: 0.85rem; color: #666; text-align: center;">* จุด Start/Finish ฝั่งเชียงของ และท่าเรือเมืองห้วยทราย สปป.ลาว[cite: 1]</p>
+                <p style="font-size: 0.85rem; color: #666; text-align: center;">* คลิกที่ปุ่มด้านบนเพื่อสลับดูตัวนักวิ่งแต่ละฝั่ง (จุด Start/Finish เชียงของ & ห้วยทราย)[cite: 1]</p>
             </div>
         </div>
 
@@ -141,24 +143,19 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // 1. สร้างแผนที่พิกัดอำเภอเชียงของ / แม่น้ำโขง
+        // 1. สร้างแผนที่
         var map = L.map('map').setView([20.265, 100.405], 14);
 
-        // เพิ่ม Tile Layer (แผนที่ OpenStreetMap)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // 2. ปักหมุด Start / Finish ฝั่งไทย
-        var thaiMarker = L.marker([20.262, 100.403]).addTo(map)
-            .bindPopup("<b>Start/Finish ฝั่งไทย</b><br>โฮงเฮียนแม่น้ำของ (เชียงของ)");
+        // หมุดสถานที่
+        L.marker([20.262, 100.403]).addTo(map).bindPopup("<b>Start/Finish ฝั่งไทย</b><br>โฮงเฮียนแม่น้ำของ");
+        L.marker([20.270, 100.415]).addTo(map).bindPopup("<b>ท่าเรือเมืองห้วยทราย</b><br>สปป. ลาว");
 
-        // ปักหมุด ฝั่งลาว (ห้วยทราย)
-        var laoMarker = L.marker([20.270, 100.415]).addTo(map)
-            .bindPopup("<b>ท่าเรือเมืองห้วยทราย & จุดเช็คพอยต์</b><br>สปป. ลาว");
-
-        // 3. กำหนดเส้นทางวิ่งฝั่งไทย (Polyline)
+        // 2. พิกัดเส้นทาง
         var routeThai = [
             [20.262, 100.403],
             [20.265, 100.395],
@@ -167,7 +164,6 @@
         ];
         L.polyline(routeThai, {color: '#e74c3c', weight: 4, dashArray: '5, 5'}).addTo(map);
 
-        // กำหนดเส้นทางวิ่งฝั่งลาว (Polyline)
         var routeLao = [
             [20.270, 100.415],
             [20.273, 100.422],
@@ -176,7 +172,7 @@
         ];
         L.polyline(routeLao, {color: '#3498db', weight: 4}).addTo(map);
 
-        // 4. สร้างไอคอนรูปนักวิ่งและการเคลื่อนที่ (Animation)
+        // 3. ตัวนักวิ่งและการเคลื่อนที่
         var runnerIcon = L.divIcon({
             className: 'runner-icon',
             html: '<div style="font-size: 24px; background: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🏃‍♂️</div>',
@@ -184,21 +180,24 @@
             iconAnchor: [17, 17]
         });
 
-        // สร้างหมุดนักวิ่งเริ่มต้นที่จุด Start ฝั่งไทย
         var runnerMarker = L.marker([20.262, 100.403], { icon: runnerIcon }).addTo(map)
-            .bindPopup("<b>กำลังวิ่ง...</b><br>Kham Kong Run #Special 2026");
+            .bindPopup("<b>กำลังวิ่ง...</b>");
 
-        // ฟังก์ชันสำหรับเคลื่อนที่ไปตามพิกัดในเส้นทาง
-        function animateRunner(routeCoords) {
+        let currentTimer = null;
+
+        function startAnimation(routeCoords) {
+            if (currentTimer) clearTimeout(currentTimer);
             let index = 0;
-            
+            runnerMarker.setLatLng(routeCoords[0]); // ย้ายไปจุดเริ่มต้นทันที
+            map.panTo(routeCoords[0]); // เลื่อนแผนที่ตาม
+
             function move() {
                 if (index < routeCoords.length) {
                     runnerMarker.setLatLng(routeCoords[index]);
                     index++;
-                    setTimeout(move, 1000); // ความเร็ว 1 วินาทีต่อจุด
+                    currentTimer = setTimeout(move, 1000);
                 } else {
-                    setTimeout(() => {
+                    currentTimer = setTimeout(() => {
                         index = 0;
                         move();
                     }, 2000);
@@ -207,8 +206,22 @@
             move();
         }
 
-        // เริ่มต้นให้ตัวนักวิ่งขยับตามเส้นทางไทย
-        animateRunner(routeThai);
+        // ฟังก์ชันสลับเส้นทางเมื่อกดปุ่ม
+        function switchRoute(type) {
+            document.getElementById('btnThai').classList.remove('active');
+            document.getElementById('btnLao').classList.remove('active');
+
+            if (type === 'thai') {
+                document.getElementById('btnThai').classList.add('active');
+                startAnimation(routeThai);
+            } else {
+                document.getElementById('btnLao').classList.add('active');
+                startAnimation(routeLao);
+            }
+        }
+
+        // เริ่มต้นรันฝั่งไทยก่อน
+        startAnimation(routeThai);
     </script>
 </body>
 </html>

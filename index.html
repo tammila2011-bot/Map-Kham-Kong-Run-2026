@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kham Kong Run #Special 2026</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; line-height: 1.6; }
+        header { background: linear-gradient(135deg, #0f4c81, #1b9aaa); color: white; text-align: center; padding: 25px 15px; }
+        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        header p { font-size: 1rem; opacity: 0.9; }
+        
+        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; }
+        .card-header { background: #ff6b6b; color: white; padding: 12px 20px; font-size: 1.2rem; font-weight: bold; }
+        .card-header.blue { background: #1b9aaa; }
+        .card-body { padding: 20px; }
+        
+        #map { width: 100%; height: 350px; border-radius: 8px; margin-bottom: 15px; }
+        
+        .route-info { display: flex; gap: 10px; margin-bottom: 15px; }
+        .route-badge { flex: 1; padding: 10px; border-radius: 8px; color: white; text-align: center; font-size: 0.9rem; font-weight: bold; }
+        .badge-thai { background: #e74c3c; }
+        .badge-lao { background: #3498db; }
+
+        .timeline-date { font-weight: bold; color: #0f4c81; font-size: 1.1rem; margin-top: 15px; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .time-item { display: flex; margin-bottom: 12px; align-items: flex-start; }
+        .time-badge { background: #ff9f43; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; min-width: 75px; text-align: center; margin-right: 12px; }
+        .time-badge.special { background: #ee5253; }
+        .time-desc { font-size: 0.95rem; color: #444; }
+
+        footer { text-align: center; padding: 20px; color: #777; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kham Kong Run #Special 2026</h1>
+        <p>วันอาทิตย์ที่ 6 - วันจันทร์ที่ 7 ธันวาคม 2569[cite: 2]</p>
+        <p style="font-size: 0.9rem; margin-top: 5px;">📍 บริเวณลานริมน้ำ โຮงเรียนแม่น้ำของ[cite: 2]</p>
+    </header>
+
+    <div class="container">
+        <!-- ส่วนแผนที่เส้นทาง -->
+        <div class="card">
+            <div class="card-header">🗺️ แผนที่เส้นทางวิ่งสองฝั่งโขง (ไทย - ลาว)</div>
+            <div class="card-body">
+                <div class="route-info">
+                    <div class="route-badge badge-thai">เส้นทาง A: วิ่งฝั่งไทย 5 กม.[cite: 1]</div>
+                    <div class="route-badge badge-lao">เส้นทาง B: เดินฝั่งลาว 5 กม.[cite: 1]</div>
+                </div>
+                <div id="map"></div>
+                <p style="font-size: 0.85rem; color: #666; text-align: center;">* จุด Start/Finish ฝั่งเชียงของ และท่าเรือเมืองห้วยทราย สปป.ลาว[cite: 1]</p>
+            </div>
+        </div>
+
+        <!-- ส่วนกำหนดการกิจกรรม -->
+        <div class="card">
+            <div class="card-header blue">📅 กำหนดการกิจกรรม</div>
+            <div class="card-body">
+                
+                <div class="timeline-date">☀️ วันอาทิตย์ที่ 6 ธันวาคม 2569[cite: 2]</div>
+                <div class="time-item">
+                    <div class="time-badge">14.00 น.</div>
+                    <div class="time-desc">เปิดลงทะเบียนนักวิ่งและรับป้ายหมายเลขวิ่ง Bib และรับเสื้อวิ่ง (เฉพาะนักวิ่งที่สั่งไว้)[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">16.00 น.</div>
+                    <div class="time-desc">พิธีเปิดนิทรรศการยุติความรุนแรงทางเพศ และผลงานกลุ่มองค์กรสตรีและเยาวชนเชียงของ[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">17.00 น.</div>
+                    <div class="time-desc">ดนตรีโฟล์คซองจากชมรมกาดนัดคนดนตรี[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">18.00 น.</div>
+                    <div class="time-desc">ปิดรับลงทะเบียนนักวิ่ง[cite: 2]</div>
+                </div>
+
+                <div class="timeline-date" style="margin-top: 25px;">☀️ วันจันทร์ที่ 7 ธันวาคม 2569[cite: 2]</div>
+                
+                <div style="font-weight: bold; color: #e74c3c; margin: 10px 0 5px 0;">🏃‍♂️ วิ่งฝั่งไทย 5 กม.[cite: 2]</div>
+                <div class="time-item">
+                    <div class="time-badge">06.30 น.</div>
+                    <div class="time-desc">เปิดลงทะเบียนนักวิ่งฝั่งไทย 5 กม. และนักวิ่งฝั่งลาว 5 กม. รอบสุดท้าย[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">06.40 น.</div>
+                    <div class="time-desc">พิธีเปิดกิจกรรม Kham Kong Run #Special 2026[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge special">07.00 น.</div>
+                    <div class="time-desc">ประธานในพิธีปล่อยตัวนักวิ่งฝั่งไทยระยะ 5 กม. เส้นทางเลียบแม่น้ำโขงทิศเหนือ ถึงห้วยน้ำเป้ง วงขึ้นถนนคอนกรีตใหม่ วิ่งวงกลมสู่ โฮงเฮียนแม่น้ำของเส้นชัย[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">08.00 น.</div>
+                    <div class="time-desc">นักวิ่งทยอยเข้าเส้นชัย นักวิ่งที่เข้าลำดับ 1-10 (แยกชายและหญิง) ได้รับรางวัลรางวัลที่ระลึก[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">08.30 น.</div>
+                    <div class="time-desc">เสร็จสิ้นกิจกรรมวิ่งฝั่งไทย[cite: 2]</div>
+                </div>
+
+                <div style="font-weight: bold; color: #3498db; margin: 20px 0 5px 0;">🏃‍♀️ วิ่งฝั่งลาว 5 กม.[cite: 2]</div>
+                <div class="time-item">
+                    <div class="time-badge">08.00-08.30</div>
+                    <div class="time-desc">นักวิ่งลงทะเบียนวิ่งฝั่งลาว ต้องนำบัตรประจำตัวประชาชน (ตัวจริง) มอบให้เจ้าหน้าที่เพื่อไปจัดทำเอกสารผ่านแดน[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">09.00 น.</div>
+                    <div class="time-desc">นักวิ่งรับเอกสารผ่านแดนฝั่งไทยพร้อมบัตรประชาชนคืน และเข้าแถวตรวจคนเข้าเมืองฝั่งไทย ที่ด่านตรวจคนเข้าเมืองท่าเรือบั๊ก และทยอยเดินทางข้ามแดนทางเรือข้ามฟาก บริเวณท่าเรือบั๊ก[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">09.10 น.</div>
+                    <div class="time-desc">ทยอยขึ้นเรือข้ามฟากฝั่งไทย[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">09.30 น.</div>
+                    <div class="time-desc">เรือข้ามฟากถึงท่าเรือเมืองห้วยทราย เจ้าหน้าที่ฝั่งลาวรอรับเอกสารข้ามแดนนักวิ่ง ให้วิ่งฝั่งลาว แล้วนักวิ่งสามารถไปรอที่กองอำนวยการฯ ศาลาร้านอาหารของโรงแรมพรวิริเวอร์ไซด์ (โรงแรมสีส้ม ตรงท่าเรือ)[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge special">10.00 น.</div>
+                    <div class="time-desc">กองอำนวยการฯ ศาลาลืมร้านอาหารโรงแรมพรวิริเวอร์ไซด์ ทีมงานวิ่งลาวและทีมงานไทยชี้แจงเส้นทางและจุดเช็คพอยท์ 3 จุด (วัดจอมเขามณีรัตน์, ค่ายทหารฝรั่งเศสเก่า, ตลาดริมน้ำ) ใช้วิธีเดินวิ่งตามอัธยาศัยท่องเที่ยววิถีชีวิตและช้อปปิ้ง มี Bib เช็คจุดเช็คพอยท์ ครบจุดกลับมาจุด Start โดย 10 ลำดับแรก (ไม่แยกชาย/หญิง) รับรางวัลที่ระลึก[cite: 2]</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-badge">12.00-16.00</div>
+                    <div class="time-desc">นักวิ่งรับใบผ่านแดนคืนได้ที่กองอำนวยการฯ และสามารถนั่งเรือกลับได้ตามเวลาที่ต้องการ โดยแจ้งเจ้าหน้าที่ฝั่งลาว แต่ต้องไม่เกินเวลา 16.00 น.[cite: 2]</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Kham Kong Run #Special 2026 • Chiang Khong</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // สร้างแผนที่พิกัดอำเภอเชียงของ / แม่น้ำโขง
+        var map = L.map('map').setView([20.265, 100.405], 14);
+
+        // เพิ่ม Tile Layer (แผนที่ OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // ปักหมุด Start / Finish ฝั่งไทย
+        var thaiMarker = L.marker([20.262, 100.403]).addTo(map)
+            .bindPopup("<b>Start/Finish ฝั่งไทย</b><br>โฮงเฮียนแม่น้ำของ (เชียงของ)");
+
+        // ปักหมุด ฝั่งลาว (ห้วยทราย)
+        var laoMarker = L.marker([20.270, 100.415]).addTo(map)
+            .bindPopup("<b>ท่าเรือเมืองห้วยทราย & จุดเช็คพอยต์</b><br>สปป. ลาว");
+
+        // ตัวอย่างเส้นทางจำลอง (Polyline) ฝั่งไทย
+        var routeThai = [
+            [20.262, 100.403],
+            [20.265, 100.395],
+            [20.268, 100.388],
+            [20.260, 100.390]
+        ];
+        L.polyline(routeThai, {color: '#e74c3c', weight: 4, dashArray: '5, 5'}).addTo(map);
+
+        // ตัวอย่างเส้นทางจำลอง (Polyline) ฝั่งลาว
+        var routeLao = [
+            [20.270, 100.415],
+            [20.273, 100.422],
+            [20.267, 100.425],
+            [20.265, 100.418]
+        ];
+        L.polyline(routeLao, {color: '#3498db', weight: 4}).addTo(map);
+    </script>
+</body>
+</html>

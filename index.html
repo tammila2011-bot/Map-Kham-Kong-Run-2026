@@ -144,7 +144,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // 1. สร้างแผนที่
-        var map = L.map('map').setView([20.265, 100.405], 14);
+        var map = L.map('map').setView([20.282074, 100.404049], 14);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -155,12 +155,12 @@
         L.marker([20.282074, 100.404049]).addTo(map).bindPopup("<b>Start/Finish ฝั่งไทย</b><br>โฮงเฮียนแม่น้ำของ");
         L.marker([20.285576, 100.406741]).addTo(map).bindPopup("<b>โรงแรมพรวิจิตริเวอร์ไซด์ ท่าเรือเมืองห้วยทราย</b><br>สปป. ลาว");
 
-        // 2. พิกัดเส้นทาง
+        // 2. พิกัดเส้นทาง (แก้ไขเติมเครื่องหมาย , ครบทุกบรรทัดแล้ว)
         var routeThai = [
             [20.282074, 100.404049],
             [20.289354, 100.396479],
             [20.289067, 100.396164],
-            [20.282067, 100.400130]
+            [20.282067, 100.400130],
             [20.282074, 100.404049]
         ];
         L.polyline(routeThai, {color: '#e74c3c', weight: 4, dashArray: '5, 5'}).addTo(map);
@@ -173,7 +173,7 @@
         ];
         L.polyline(routeLao, {color: '#3498db', weight: 4}).addTo(map);
 
-        // 3. ตัวนักวิ่งและการเคลื่อนที่
+        // 3. ตัวนักวิ่งและการเคลื่อนที่ (ปรับพิกัดเริ่มต้นให้ตรงกับจุดไทย)
         var runnerIcon = L.divIcon({
             className: 'runner-icon',
             html: '<div style="font-size: 24px; background: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">🏃‍♂️</div>',
@@ -181,7 +181,7 @@
             iconAnchor: [17, 17]
         });
 
-        var runnerMarker = L.marker([20.262, 100.403], { icon: runnerIcon }).addTo(map)
+        var runnerMarker = L.marker([20.282074, 100.404049], { icon: runnerIcon }).addTo(map)
             .bindPopup("<b>กำลังวิ่ง...</b>");
 
         let currentTimer = null;
